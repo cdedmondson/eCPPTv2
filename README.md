@@ -1,5 +1,5 @@
 # eCPPTv2
-eCPPTv2 Preparation Notes
+eCPPTv2 Notes
 
 # Information Gathering
 
