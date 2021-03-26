@@ -224,9 +224,81 @@ nmap --script auth <target>
 
 # Idle Scan Hping Nmap
 
-Idle scan is stealthy because the target host will never know the real attacker's ip
+**Idle scan is stealthy because the target host will never know the real attacker's ip**
 
 ###### Probes a zombie candidate:
 ```
 hping3 -S -r -p <port> <zombie_ip>
+```
+
+###### Spoofs zombie’s IP and probes target:
+```
+hping3 -a <zombie_ip> -S -p <dst_port> <target>
+```
+
+###### Determines if IP ID is incremental:
+```
+nmap --script ipidseq <target> -p <port>
+```
+
+###### Performs Idle scan. (performs previous two steps simultaneously):
+```
+nmap -Pn -sI -p <dst_port> <zombie_ip>:<src_port> <target>
+```
+
+# Advanced Port Scanning
+
+###### Fragment packets:
+```
+nmap -f <target> -n --disable-arp-ping -Pn
+```
+
+###### Fragmented SYN scan:
+```
+nmap -sS -f <target>
+```
+
+###### Performs a scan using decoys:
+```
+nmap -p <port> -D <decoy1,ME,decoy2,etc..> <target>
+```
+
+###### Use random number of decays:
+```
+nmap -D RND:10 <target> -sS -p <port> -Pn --disable-arp-ping
+```
+
+###### Port scan using DNS as source port 53:
+```
+nmap --source-port 53 <target> -sS
+```
+
+###### Port scan well known ports using DNS as source port:
+```
+hping3 -S -s 53 --scan known <target>
+```
+
+###### Spoof MAC address (useful if firewall only accepts packets from specific MAC addresses):
+```
+nmap --spoof-mac <choose vendor MAC i.e. Apple or Intel etc..> <target> -p <port> -Pn --disable-arp-ping -n
+```
+
+###### Random MAC address:
+```
+nmap --spoof-mac 0 <target> -p <port> -Pn --disable-arp-ping -n
+```
+
+###### Delayed scan with randomized hosts from a list of hosts:
+```
+nmap -iL hosts.list -sS -p <port> --randomize-hosts -T 2
+```
+
+###### Spoof IP address of alive host:
+```
+hping3 -a <alive host on network> -S -p <port> <target>
+```
+
+###### Evade firewalls that use packet size to detect port scans:
+```
+nmap -sS --data-length 10 -p 21 <target>
 ```
