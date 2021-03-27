@@ -77,7 +77,7 @@ dnsrecon -d <domain>
 dnsenum <domain>
 ```
 
-# Host Discovery with Fping Hping Nmap
+## Host Discovery with Fping Hping Nmap
 
 ###### Before a SYN scan with wihtout arp ping:
 ```
@@ -175,7 +175,7 @@ nmap -sX <target>
 nmap -sF <target>
 ```
 
-# Nmap NSE
+## Nmap NSE
 
 ###### NSE scripts are located in:
 ```
@@ -222,7 +222,7 @@ nmap --script smb-enum-shares <target> -p 445
 nmap --script auth <target>
 ```
 
-# Idle Scan Hping Nmap
+## Idle Scan Hping Nmap
 
 **Idle scan is stealthy because the target host will never know the real attacker's ip**
 
@@ -246,7 +246,7 @@ nmap --script ipidseq <target> -p <port>
 nmap -Pn -sI -p <dst_port> <zombie_ip>:<src_port> <target>
 ```
 
-# Advanced Port Scanning
+## Advanced Port Scanning
 
 ###### Fragment packets:
 ```
@@ -301,4 +301,120 @@ hping3 -a <alive host on network> -S -p <port> <target>
 ###### Evade firewalls that use packet size to detect port scans:
 ```
 nmap -sS --data-length 10 -p 21 <target>
+```
+
+# Enumeration
+
+## NetBIOS and Null Session
+```
+nmap -sS -p 135 <target>
+```
+
+###### Probes NetBIOS info of machine:
+```
+nbtscan -v <target>
+```
+
+###### Displays system shares information:
+```
+nmblookup -A <target>
+```
+###### Lists all shared shares of target:
+```
+smbclient -L <target>
+```
+
+###### Enumerates information on target Windows system (shares, users, etc):
+```
+enum4linux -a <target>
+```
+
+###### Attempts to access a shared resources with no credentials (null session):
+```
+smbclient \\\\<target>\\<share> -N
+```
+
+###### Attempt to connect to RPC service with no credentials:
+```
+rpcclient -N -U "" <target>
+```
+
+###### Attempts to bruteforce SMB credentials with nmap:
+```
+nmap --script=smb-brute <target>
+```
+
+## SNMP Enumeration
+
+###### Enumerates SNMP info of the given target:
+```
+snmpwalk -c <c_string> -v <version> <target>
+```
+
+###### Attempts to brute force SNMP community string:
+```
+nmap -sU -p 161 --script=snmp-brute <target>
+```
+
+###### Enumerate users:
+```
+nmap -sU -p 161 --script snmp-win32-users <target>
+```
+
+###### Lists all SNMP-related nmap scripts:
+```
+ls -l /usr/share/nmap/script | grep -i snmp
+```
+
+###### Obtains SNMP info at specified OID:
+```
+snmpwalk -c <c_string> -v <version> <target> <OID>
+```
+
+###### Changes the SNMP information at specified OID:
+```
+snmpset -c <c_string> -v <version> <target> <OID> <value_type> <value>
+```
+
+###### Onesixtyone brute force:
+```
+echo public > community
+echo private >> community
+echo manager >> community
+onesixtyone -c community <target>
+```
+
+###### Enumerate system processes:
+```
+snmpwalk -c <community string> -<version> <target> 1.3.6.1.2.1.25.1.6.0
+```
+
+###### Enumerate running programs:
+```
+snmpwalk -c <community string> -<version> <target> 1.3.6.1.2.1.25.4.2.1.2
+```
+
+###### Enumerate processes path:
+```
+snmpwalk -c <community string> -<version> <target> 1.3.6.1.2.1.25.4.2.1.4
+```
+
+###### Enumerate storage units:
+```
+snmpwalk -c <community string> -<version> <target> 1.3.6.1.2.1.25.2.3.1.4
+```
+
+###### Enumerate software name:
+```
+snmpwalk -c <community string> -<version> <target> 1.3.6.1.2.1.25.6.3.1.2
+```
+
+###### Enumerate user accounts:
+```
+snmpwalk -c <community string> -<version> <target> 1.3.6.1.4.1.77.1.2.25
+```
+
+###### Enumerate tcp local ports:
+```
+snmpwalk -c <community string> -<version> <target> 1.3.6.1.2.1.6.13.1.3
 ```
